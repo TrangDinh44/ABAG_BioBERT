@@ -1,9 +1,27 @@
-def modelLoad():
-  import anago
+def modelLoad(nameOnly):
+  from simpletransformers.ner import NERModel
 
-  # Retrive model
-  print('Loading the trained NER model...')
-  return anago.Sequence.load('weights_CV.h5', 'params_CV.json', 'preprocessor_CV.pkl')
+  # Ask for user's GPU option
+  use_cuda = False
+  if str(input("Use GPU?")) == "yes":
+    use_cuda = True
+
+  # LOAD the newly trained bioBERT model
+  model = NERModel('bert', modelDir, use_cuda=use_cuda)
+
+  # Analyze the abstract using the model
+  # model returns an array in the 'predictions' variable
+  predictions, raw_outputs = model.predict(samples)
+  
+  if nerOut:
+    for idx, sample in enumerate(samples):
+      print("\n")
+      print('Abstract #%d:' % (idx+1))    # print sentence number
+      print(sample)
+      for word in predictions[idx]:
+        print('{}'.format(word))   # print the tokens and their labels
+      
+  return predictions
 
 # Perform NER on abstract content
 def modelAnalyze(abstCont):
@@ -27,16 +45,23 @@ def modelAnalyze(abstCont):
 
 # Post-processing the output
 def nerOutput(ab_id):
+  posOpt = ["y", "yes", "true"]
+  
   #Ask for user's output options
   abagOpt = int(input('''\nPlease choose the entity/entities for NER:
   Type 1 for AB only
   Type 2 for AG only
   Type 3 for both AB and AG
   Enter a number (1, 2, or 3): '''))
-  nameOnly = True
+  
+  nerOut = True
+  if str(input('''Do you want to name extraction only or NER visualization? 
+  Type "y", "yes", or "true" if you want NER visualization: ''')).lower() not in posOpt:
+    nerOut = False
+
   saveOut = True
-  saveOpt = str(input('Do you want to save the output results in a text file? Type "y", "yes", or "true" if you want to save: '))
-  if not (saveOpt == "y" or saveOpt == "yes" or saveOpt == "true"):
+  if str(input('''Do you want to save the output results in a text file?
+  Type "y", "yes", or "true" if you want to save: ''')).lower() not in posOpt:
     saveOut = False
   
   text = ""
