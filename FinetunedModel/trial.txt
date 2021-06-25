@@ -1,1 +1,0 @@
-This directory contains all files needed to retrieve the ABAG-BioBERT model.
