@@ -13,5 +13,6 @@ def customize_tokenizer(nlp):
                    infix_finditer=infix_re.finditer,
                    token_match=None)
 
-custom_nlp = spacy.load('en_core_web_sm')
-custom_nlp.tokenizer = customize_tokenizer(custom_nlp)
+# Use 2-line script below to call the customize_tokenizer function:
+#custom_nlp = spacy.load('en_core_web_sm')
+#custom_nlp.tokenizer = customize_tokenizer(custom_nlp)
