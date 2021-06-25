@@ -7,6 +7,11 @@ def modelNER(samples, modelDir, useCuda, nerOut):
 
   # Analyze the abstract using the model
   # tokenize abstract content
+  import spacy
+  from custom_tokenizer import customize_tokenizer
+  # Create a customized tokenizer
+  custom_nlp = spacy.load('en_core_web_sm')
+  custom_nlp.tokenizer = customize_tokenizer(custom_nlp)
   samples = [' '.join([str(x) for x in custom_nlp(i)]) for i in samples]
   # model returns an array in the 'predictions' variable
   predictions, raw_outputs = model.predict(samples)
@@ -88,7 +93,7 @@ def nerOutput(ab_id):
   Type "y", "yes", or "true" if GPU is on: ''')).lower() in posOpt:
     useCuda = True
   
-  samples = [v for v in ab_id.values()]
+  samples = [str(v) for v in ab_id.values()]
   modelDir = str(input('Enter the directory where you put the model: '))
   predAbs, predAgs = predForm(modelNER(samples, modelDir, useCuda, nerOut), nameOnly)
   
