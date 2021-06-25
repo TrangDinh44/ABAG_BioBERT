@@ -22,15 +22,23 @@ def inpPMID(pmidList, userMail, saveAbst=True, saveAbst_fileName="Abstracts"):
   # get the abstracts (or titles if abstracts are not available)
   handle = Entrez.efetch(db="pubmed", id=pmidList, rettype="xml", retmode="text")
   record = Entrez.read(handle)
-  abstr = []
+  abstList = []
   for pmArt in record["PubmedArticle"]:
       if 'Abstract' in pmArt['MedlineCitation']['Article'].keys():
-          abstr.append(pmArt['MedlineCitation']['Article']["Abstract"]["AbstractText"][0])
+          abstList.append(pmArt['MedlineCitation']['Article']["Abstract"]["AbstractText"])
       else:
-          abstr.append(pmArt['MedlineCitation']['Article']["ArticleTitle"])
+          abstList.append(pmArt['MedlineCitation']['Article']["ArticleTitle"])
+          
+  samples = []
+  for abstract in abstList:
+    absText = ""
+    for paragraph in abstract:
+      absText += str(paragraph) + " "
+    absText = absText[:-1]
+    samples.append(absText)
 
   # concatenate/zip resulted abstracts (or titles) with their respectative pmids
-  ab_idDict = dict(zip(pmidList,abstr))
+  ab_idDict = dict(zip(pmidList,samples))
   
   # import the dict into a csv excel file if user chose to save (default)
   if saveAbst:
