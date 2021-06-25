@@ -1,10 +1,9 @@
-
-# Perform NER on abstract content
-def modelNER(samples, modelDir):
+# Perform NER on all abstract content
+def modelNER(samples, modelDir, useCuda, nerOut):
   from simpletransformers.ner import NERModel
 
   # LOAD the newly trained bioBERT model
-  model = NERModel('bert', modelDir, use_cuda=use_cuda)
+  model = NERModel('bert', modelDir, use_cuda=useCuda)
 
   # Analyze the abstract using the model
   # tokenize abstract content
@@ -23,7 +22,7 @@ def modelNER(samples, modelDir):
   return predictions
 
 # Re-format the predicted results
-def predForm(predArr):
+def predForm(predArr, nameOnly):
   token = [[] for i in range(len(predArr))]
   label = [[] for i in range(len(predArr))]
 
@@ -34,23 +33,30 @@ def predForm(predArr):
         label[i].append(v)
   
   startAB = 0; startAG = 0; end = 0
-  trueAb = []; trueAg = []
-  for i in range(len(token)):
-    if label[i] == 'B-Antibody':
-      startAB = i
-    elif label[i] == 'B-Antigen':
-      startAG = i
-    if label[i] != 'I-Antibody' and label[i] != 'I-Antigen':
-      end = i
-      if startAB != 0 and startAB < end:
-        trueAb.append(" ".join(token[startAB:end]))
-        startAB = 0; end = 0
-      elif startAG != 0 and startAG < end:
-        trueAg.append(" ".join(token[startAG:end]))
-        startAG = 0; end = 0
+  trueAb = [[] for i in range(len(token))]
+  trueAg = [[] for i in range(len(token))]
+  for abstNo in range(len(token)):
+    for i in range(len(token[abstNo])):
+      if label[abstNo][i] == 'B-Antibody':
+        startAB = i
+      elif label[abstNo][i] == 'B-Antigen':
+        startAG = i
+      if label[abstNo][i] != 'I-Antibody' and label[abstNo][i] != 'I-Antigen':
+        end = i
+        if startAB != 0 and startAB < end:
+          trueAb[abstNo].append(" ".join(token[abstNo][startAB:end]))
+          startAB = 0; end = 0
+        elif startAG != 0 and startAG < end:
+          trueAg[abstNo].append(" ".join(token[abstNo][startAG:end]))
+          startAG = 0; end = 0
+
+    if nameOnly:
+      trueAb[abstNo] = list(set(trueAb[abstNo]))
+      trueAg[abstNo] = list(set(trueAg[abstNo]))
+
   return trueAb, trueAg
 
-# Post-processing the output
+# Post-processing the output based on user's direction
 def nerOutput(ab_id):
   posOpt = ["y", "yes", "true"]
   
@@ -72,26 +78,29 @@ def nerOutput(ab_id):
     nameOnly = False
     
   saveOut = True
-  if str(input('''Do you want to save the output results in a text file?
+  if str(input('''Do you want to save the recognized names in a text file?
   Type "y", "yes", or "true" if you want to save: ''')).lower() not in posOpt:
     saveOut = False
     
   # Ask for user's GPU option
-  use_cuda = False
-  if str(input('''Are you using GPU?
+  useCuda = False
+  if str(input('''Are you using GPU? GPU is recommended for speedy performance.
   Type "y", "yes", or "true" if GPU is on: ''')).lower() in posOpt:
-    use_cuda = True
+    useCuda = True
   
   samples = [v for v in ab_id.values()]
   modelDir = str(input('Enter the directory where you put the model: '))
-  predAbs, predAgs = predForm(modelNER(samples, modelDir))
+  predAbs, predAgs = predForm(modelNER(samples, modelDir, useCuda, nerOut), nameOnly)
   
+  pmIDs = [k for k in ab_id.keys()]
   text = ""
-  text += "//\nPMID: " + k + "\n"
-  if abagOpt == 1 or abagOpt == 3:
-    text += "Antibody names:\t" + ", ".join(predAbs) + "\n"
-  if abagOpt == 2 or abagOpt == 3:
-    text += "Antigen names:\t" + ", ".join(predAgs) + "\n"
+
+  for abstNo in range(len(ab_id)):
+    text += "//\nPMID: " + pmIDs[abstNo] + "\n"
+    if abagOpt == 1 or abagOpt == 3:
+      text += "Antibody names:\t" + ", ".join(predAbs[abstNo]) + "\n"
+    if abagOpt == 2 or abagOpt == 3:
+      text += "Antigen names:\t" + ", ".join(predAgs[abstNo]) + "\n"
 
   print(text)
 
