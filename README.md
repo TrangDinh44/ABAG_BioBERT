@@ -11,4 +11,8 @@ Clone the repository to your coding environment by typing the script:
    
 Set the working directory to the 'ABAG_BioBERT' folder, then install all the required packages listed in requirements.txt.
 
+INVOKE THE SIMPLE TRANSFORMERS:
+
+!pip install -q simpletransformers
+
 Run the script file NER_tool.py and follow instructions.
