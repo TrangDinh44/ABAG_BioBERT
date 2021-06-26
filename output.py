@@ -1,5 +1,20 @@
+# Ask and classify user's options
+def userOpt(question):
+  posOpt = posOpt = ["y", "yes", "true"]
+  return str(input("\n"+question)).lower() in posOpt
+
+# Process user's print and/or save options
+def outPrintSave(text, taskName):
+  print("\n" + taskName + " has been completed!")
+  if userOpt('Do you want to print out the results?\nType "y", "yes", or "true" if you want to print: '):
+    print(text)
+  if userOpt('Do you want to save the results in a text file?\nType "y", "yes", or "true" if you want to save: '):
+    f = open(str(input("Enter the name you want to save the resulted file as: ")) +".txt", "w")
+    f.write(text)
+    f.close() 
+
 # Perform NER on all abstract content
-def modelNER(samples, modelDir, useCuda, nerOut):
+def modelNER(samples, modelDir, useCuda):
   from simpletransformers.ner import NERModel
 
   # LOAD the newly trained bioBERT model
@@ -16,18 +31,18 @@ def modelNER(samples, modelDir, useCuda, nerOut):
   # model returns an array in the 'predictions' variable
   predictions, raw_outputs = model.predict(samples)
   
-  if nerOut:
+  if userOpt('Do you want name extraction only or NER visualization?\nType "y", "yes", or "true" if you want NER visualization: '):
+    nerText = ""
     for idx, sample in enumerate(samples):
-      print("\n")
-      print('Abstract #%d:' % (idx+1))    # print sentence number
-      print(sample)
+      nerText += "\nAbstract #%d:\n"%(idx+1) + sample + "\n" # print abstract number and content
       for word in predictions[idx]:
-        print('{}'.format(word))   # print the tokens and their labels
+        nerText += '{}'.format(word) + "\n"   # print the tokens and their labels
+    outPrintSave(nerText, "The NER visualization task")
       
   return predictions
 
 # Re-format the predicted results
-def predForm(predArr, nameOnly):
+def predForm(predArr, allMent):
   token = [[] for i in range(len(predArr))]
   label = [[] for i in range(len(predArr))]
 
@@ -55,7 +70,7 @@ def predForm(predArr, nameOnly):
           trueAg[abstNo].append(" ".join(token[abstNo][startAG:end]))
           startAG = 0; end = 0
 
-    if nameOnly:
+    if not allMent:
       trueAb[abstNo] = list(set(trueAb[abstNo]))
       trueAg[abstNo] = list(set(trueAg[abstNo]))
 
@@ -71,34 +86,18 @@ def nerOutput(ab_id):
   Type 2 for AG only
   Type 3 for both AB and AG
   Enter a number (1, 2, or 3): '''))
-  
-  nerOut = True
-  if str(input('''Do you want name extraction only or NER visualization? 
-  Type "y", "yes", or "true" if you want NER visualization: ''')).lower() not in posOpt:
-    nerOut = False
 
-  nameOnly = True
-  if str(input('''Do you want the output results to include frequencies of name mentions?
-  Type "y", "yes", or "true" if you want to include frequencies: ''')).lower() in posOpt:
-    nameOnly = False
-    
-  saveOut = True
-  if str(input('''Do you want to save the recognized names in a text file?
-  Type "y", "yes", or "true" if you want to save: ''')).lower() not in posOpt:
-    saveOut = False
-    
-  # Ask for user's GPU option
-  useCuda = False
-  if str(input('''Are you using GPU? GPU is recommended for speedy performance.
-  Type "y", "yes", or "true" if GPU is on: ''')).lower() in posOpt:
-    useCuda = True
+  allMent = userOpt('''The same ABAG names may appear multiple times in an abstract.
+  Do you want the output results to list all such mentions or just unique names?
+  Type "y", "yes", or "true" if you want to list all mentions: ''')
+  useCuda = userOpt('Are you using GPU? GPU is recommended for speedy performance.\nType "y", "yes", or "true" if GPU is on: ')
   
   samples = [str(v) for v in ab_id.values()]
-  modelDir = str(input('Enter the directory where you put the model: '))
-  predAbs, predAgs = predForm(modelNER(samples, modelDir, useCuda, nerOut), nameOnly)
+  modelDir = str(input('\nEnter the directory where you put the model: '))
+  predAbs, predAgs = predForm(modelNER(samples, modelDir, useCuda), allMent)
   
   pmIDs = [k for k in ab_id.keys()]
-  text = ""
+  text = "\n"
 
   for abstNo in range(len(ab_id)):
     text += "//\nPMID: " + pmIDs[abstNo] + "\n"
@@ -106,10 +105,5 @@ def nerOutput(ab_id):
       text += "Antibody names:\t" + ", ".join(predAbs[abstNo]) + "\n"
     if abagOpt == 2 or abagOpt == 3:
       text += "Antigen names:\t" + ", ".join(predAgs[abstNo]) + "\n"
-
-  print(text)
-
-  if saveOut:
-    f = open("ABAG_NER_Results.txt", "w")
-    f.write(text)
-    f.close()
+  
+  outPrintSave(text, "The name extraction task")
