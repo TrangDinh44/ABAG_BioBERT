@@ -66,7 +66,7 @@ def nerInput():
 
     Type 1 if your input is a text; Type 2 if your input is text file; Type 3 if your input is PubMed ID: """))
   except ValueError:
-    print("Your option was INVALID! Please try again and enter as INTEGER either 1, 2, or 3.")
+    print("Your option was INVALID! Please try again and enter 1, 2, or 3 as INTEGER.")
     return dict()
 
   if option == 1:
@@ -80,7 +80,7 @@ def nerInput():
     userMail = str(input("Please enter your email: "))
     ab_id = inpPMID(pmidList, userMail)
   else:
-    print("Your option was INVALID! Please try again and enter either 1, 2, or 3.")
+    print("Your option was INVALID! Please try again and enter 1, 2, or 3.")
     return dict()
 
   return ab_id
