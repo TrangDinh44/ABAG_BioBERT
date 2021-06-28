@@ -18,6 +18,7 @@ def modelNER(samples, modelDir, useCuda):
   from simpletransformers.ner import NERModel
 
   # LOAD the newly trained bioBERT model
+  print("Loading the BioBERT model ...")
   model = NERModel('bert', modelDir, use_cuda=useCuda)
 
   # Analyze the abstract using the model
@@ -27,6 +28,7 @@ def modelNER(samples, modelDir, useCuda):
   # Create a customized tokenizer
   custom_nlp = spacy.load('en_core_web_sm')
   custom_nlp.tokenizer = customize_tokenizer(custom_nlp)
+  print("Processing the text, which may take a long time ... ")
   samples = [' '.join([str(x) for x in custom_nlp(i)]) for i in samples]
   # model returns an array in the 'predictions' variable
   predictions, raw_outputs = model.predict(samples)
