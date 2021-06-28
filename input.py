@@ -55,7 +55,7 @@ def inpPMID(pmidList, userMail):
 
 def nerInput():
   try:
-    option = int(input("""User can enter either a text file or PudMed IDs as input to retrieve abstract content.
+    option = int(input("""User can directly paste the text, or enter either a text file or PudMed IDs as input to retrieve abstract content.
 
     For the text file option, the file can contain 1 or multiple abstracts, 1 line for each abstract and the line should be formatted as tab separated values: PMID\tAbstract_content
     (with the PMID can be replaced with your own ordinary number or any accession ID of your choice).
@@ -64,19 +64,22 @@ def nerInput():
     The email address should be valid and entered as a string. 
     There are also options if user wants to save the retrieved results as a csv file or not; if yes, user can enter the file's name when directed.
 
-    Type 1 if your input is text file; Type 2 if your input is PubMed ID: """))
+    Type 1 if your input is a text; Type 2 if your input is text file; Type 2 if your input is PubMed ID: """))
   except ValueError:
-    print("Your option was INVALID! Please try again and enter as INTEGER either 1 or 2.")
+    print("Your option was INVALID! Please try again and enter as INTEGER either 1, 2, or 3.")
 
   if option == 1:
+    abstText = str(input("Please paste your abstract text here: "))
+    ab_id = {0 : abstText}
+  elif option == 2:
     fileName = str(input("Please enter the directory to your text file: "))
     ab_id = inpTxt(fileName)
-  elif option == 2:  
+  elif option == 3:  
     pmidList = list(set(str(input("Please enter the list of all PubMed IDs, separated by comma and space (Example: 4329581, 32104937): ")).split(", ")))
     userMail = str(input("Please enter your email: "))
     ab_id = inpPMID(pmidList, userMail)
   else:
     ab_id = dict()
-    print("Your option was INVALID! Please try again and enter either 1 or 2.")
+    print("Your option was INVALID! Please try again and enter either 1, 2, or 3.")
 
   return ab_id
