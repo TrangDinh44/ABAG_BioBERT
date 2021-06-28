@@ -64,9 +64,10 @@ def nerInput():
     The email address should be valid and entered as a string. 
     There are also options if user wants to save the retrieved results as a csv file or not; if yes, user can enter the file's name when directed.
 
-    Type 1 if your input is a text; Type 2 if your input is text file; Type 2 if your input is PubMed ID: """))
+    Type 1 if your input is a text; Type 2 if your input is text file; Type 3 if your input is PubMed ID: """))
   except ValueError:
     print("Your option was INVALID! Please try again and enter as INTEGER either 1, 2, or 3.")
+    return dict()
 
   if option == 1:
     abstText = str(input("Please paste your abstract text here: "))
@@ -79,7 +80,7 @@ def nerInput():
     userMail = str(input("Please enter your email: "))
     ab_id = inpPMID(pmidList, userMail)
   else:
-    ab_id = dict()
     print("Your option was INVALID! Please try again and enter either 1, 2, or 3.")
+    return dict()
 
   return ab_id
