@@ -81,11 +81,14 @@ def nerOutput(ab_id):
   posOpt = ["y", "yes", "true"]
   
   #Ask for user's output options
-  abagOpt = int(input('''\nPlease choose the entity/entities for NER:
-  Type 1 for AB only
-  Type 2 for AG only
-  Type 3 for both AB and AG
-  Enter a number (1, 2, or 3): '''))
+  try:
+    abagOpt = int(input('''\nPlease choose the entity/entities for NER:
+    Type 1 for AB only
+    Type 2 for AG only
+    Type 3 for both AB and AG
+    Enter a number (1, 2, or 3): '''))
+  except ValueError:
+    print("Your option is INVALID! Please try again and enter 1, 2, or 3 as an INTEGER.")
 
   allMent = userOpt('''The same ABAG names may appear multiple times in an abstract.
   Do you want the output results to list all such mentions or just unique names?
