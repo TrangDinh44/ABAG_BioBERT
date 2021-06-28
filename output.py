@@ -87,8 +87,7 @@ def nerOutput(ab_id):
     Type 3 for both AB and AG
     Enter a number (1, 2, or 3): '''))
   for abagOpt not in ["1", "2", "3"]:
-    print("Your option is INVALID!")
-    abagOpt = str(input('''Please try again and enter 1 or 2 or 3:
+    abagOpt = str(input('''Your option is INVALID! Please try again and enter 1 or 2 or 3:
     Type 1 for AB only
     Type 2 for AG only
     Type 3 for both AB and AG
@@ -108,9 +107,9 @@ def nerOutput(ab_id):
 
   for abstNo in range(len(ab_id)):
     text += "//\nPMID: " + pmIDs[abstNo] + "\n"
-    if abagOpt == 1 or abagOpt == 3:
+    if abagOpt == "1" or abagOpt == "3":
       text += "Antibody names:\t" + ", ".join(predAbs[abstNo]) + "\n"
-    if abagOpt == 2 or abagOpt == 3:
+    if abagOpt == "2" or abagOpt == "3":
       text += "Antigen names:\t" + ", ".join(predAgs[abstNo]) + "\n"
   
   outPrintSave(text, "The name extraction task")
