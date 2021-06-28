@@ -3,12 +3,15 @@ def inpTxt(fileName):
   # The file format should be PMID\tAbstract_content\n for each entry
   newAbst_List = []
   pmid_List = [] #PMID can also be accession ID created by user
+  print("The text file is being processed to extract content. It may take a long time if there's a big number of abstracts ...")
+  
   for line in f:
     line = line.rstrip()
     if line:
       pmid_List.append(line.split("\t")[0])
       newAbst_List.append(line.split("\t")[1])
   f.close()
+  
   # concatenate/zip resulted abstracts (or titles) with their respectative pmids
   ab_idDict = dict(zip(pmid_List, newAbst_List))
   return ab_idDict
@@ -17,7 +20,8 @@ def inpPMID(pmidList, userMail):
     ### get abstracts for all pmids from user's input
   from Bio import Entrez
   import csv
-
+  print("The abtracts are being downloaded from Medline ...")
+  
   Entrez.email = userMail # userMail shoud be a string
   # get the abstracts (or titles if abstracts are not available)
   handle = Entrez.efetch(db="pubmed", id=pmidList, rettype="xml", retmode="text")
