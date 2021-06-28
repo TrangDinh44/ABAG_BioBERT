@@ -88,7 +88,7 @@ def nerOutput(ab_id):
     Type 3 for both AB and AG
     Enter a number (1, 2, or 3): '''))
   except ValueError:
-    print("Your option is INVALID! Please try again and enter 1, 2, or 3 as an INTEGER.")
+    return "Your option is INVALID! Please try again and enter 1, 2, or 3 as an INTEGER."
 
   allMent = userOpt('''The same ABAG names may appear multiple times in an abstract.
   Do you want the output results to list all such mentions or just unique names?
