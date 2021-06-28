@@ -68,10 +68,16 @@ def nerInput():
     The email address should be valid and entered as a string. 
     There are also options if user wants to save the retrieved results as a csv file or not; if yes, user can enter the file's name when directed.
 
-    Type 1 if your input is a text; Type 2 if your input is text file; Type 3 if your input is PubMed ID: \n"""))
+    Type 1 if your input is a text
+    Type 2 if your input is text file
+    Type 3 if your input is PubMed ID
+    Enter a number (1, 2, or 3): \n"""))
   for option not in ["1", "2", "3"]:
     option = str(input("""Your option was INVALID! Please try again and enter 1 or 2 or 3:
-                       Type 1 if your input is a text; Type 2 if your input is text file; Type 3 if your input is PubMed ID: \n"""))
+                       Type 1 if your input is a text
+                       Type 2 if your input is text file
+                       Type 3 if your input is PubMed ID
+                       Enter a number (1, 2, or 3): \n"""))
 
   if option == "1":
     abstText = str(input("Please paste your abstract text here: "))
