@@ -58,8 +58,8 @@ def inpPMID(pmidList, userMail):
   return ab_idDict
 
 def nerInput():
-  try:
-    option = int(input("""User can directly paste the text, or enter either a text file or PudMed IDs as input to retrieve abstract content.
+  # Ask user for input options
+  option = str(input("""User can directly paste the text, or enter either a text file or PudMed IDs as input to retrieve abstract content.
 
     For the text file option, the file can contain 1 or multiple abstracts, 1 line for each abstract and the line should be formatted as tab separated values: PMID\tAbstract_content
     (with the PMID can be replaced with your own ordinary number or any accession ID of your choice).
@@ -69,22 +69,19 @@ def nerInput():
     There are also options if user wants to save the retrieved results as a csv file or not; if yes, user can enter the file's name when directed.
 
     Type 1 if your input is a text; Type 2 if your input is text file; Type 3 if your input is PubMed ID: \n"""))
-  except ValueError:
-    print("Your option was INVALID! Please try again and enter 1, 2, or 3 as INTEGER.")
-    return dict()
+  for option not in ["1", "2", "3"]:
+    option = str(input("""Your option was INVALID! Please try again and enter 1 or 2 or 3:
+                       Type 1 if your input is a text; Type 2 if your input is text file; Type 3 if your input is PubMed ID: \n"""))
 
-  if option == 1:
+  if option == "1":
     abstText = str(input("Please paste your abstract text here: "))
     ab_id = {"0" : abstText}
-  elif option == 2:
+  elif option == "2":
     fileName = str(input("Please enter the directory to your text file: "))
     ab_id = inpTxt(fileName)
-  elif option == 3:  
+  else:
     pmidList = list(set(str(input("Please enter the list of all PubMed IDs, separated by comma and space (Example: 4329581, 32104937): ")).split(", ")))
     userMail = str(input("Please enter your email: "))
     ab_id = inpPMID(pmidList, userMail)
-  else:
-    print("Your option was INVALID! Please try again and enter 1, 2, or 3.")
-    return dict()
 
   return ab_id
