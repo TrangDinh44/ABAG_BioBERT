@@ -11,7 +11,7 @@ This ABAG_NER package serves as a tool to automatically extract Antibody and/or 
    
 2. Set the working directory to the 'ABAG_BioBERT' folder, then install all the required packages listed in requirements.txt.
 
-3. In this working directory, download the ABAG_NER model from https://drive.google.com/drive/folders/16nKwwyuWqMK7upiL4cR-W1jcB6TWeI0-?usp=sharing
+3. In this working directory, download our trained ABAG_NER model from https://drive.google.com/drive/folders/16nKwwyuWqMK7upiL4cR-W1jcB6TWeI0-?usp=sharing
 
 4. Invoke the Simple Transformers:
 
